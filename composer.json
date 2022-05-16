@@ -1,0 +1,34 @@
+{
+    "name": "ahtsolutions/upgradetool",
+    "description": "Tool to compare your code with updates in magento core",
+    "type": "magento-component",
+    "version": "0.0.1-dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mykola Akhtyrtsev",
+            "email": "aktyrtsevm@gmail.com",
+            "role": "developer"
+        }
+    ],
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "require": {
+        "php": "^7.1.0",
+        "symfony/console": "~4.4.0",
+        "symfony/process": "~4.4.0",
+        "magento/framework": "^100|^101|^102|^103"
+    },
+    "autoload": {
+        "psr-4": {
+            "AHTSolutions\\UpgradeTool\\": "src/"
+        }
+    },
+    "minimum-stability": "alpha",
+    "prefer-stable": true,
+    "bin":[
+        "bin/mg-upgrade-tool"
+    ]
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php
+$mDir = dirname(__DIR__);
+$autoloadFiles = [$mDir . '/../../../app/autoload.php', $mDir . '/../../autoload.php', $mDir . '/../vendor/autoload.php'];
+
+foreach ($autoloadFiles as $file) {
+    if (file_exists($file)) {
+        require $file;
+
+        break;
+    }
+}
+
+if (!defined('BP')) {
+    define('BP', dirname(__DIR__, 4));
+}
+
+$application = new AHTSolutions\UpgradeTool\CLI\Application();
+$application->run();
