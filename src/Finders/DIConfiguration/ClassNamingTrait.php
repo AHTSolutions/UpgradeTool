@@ -21,4 +21,14 @@ trait ClassNamingTrait
             ? $prefRes
             : $result;
     }
+
+    /**
+     * @param string $vendorName
+     * @return string
+     */
+    protected function prepareSearchPatternByName(string $vendorName): string
+    {
+        $vendorName = ucfirst($vendorName);
+        return '/^' . $vendorName . '\\\\.+$/';
+    }
 }

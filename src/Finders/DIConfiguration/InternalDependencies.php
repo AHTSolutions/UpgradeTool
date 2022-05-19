@@ -33,9 +33,9 @@ class InternalDependencies implements FinderInterface
     /**
      * @inheriDoc
      *
-     * @param string $searchPattern
+     * @param string $vendorName
      */
-    public function getUsedClasses(string $searchPattern): array
+    public function getUsedClasses(string $vendorName): array
     {
         if ($this->area) {
             $result = [];
@@ -45,6 +45,7 @@ class InternalDependencies implements FinderInterface
             $arguments = $config['arguments'] ?? [];
             $types = $config['instanceTypes'] ?? [];
             $usedConfiguration = [];
+            $searchPattern = $this->prepareSearchPatternByName($vendorName);
 
             $searchFunction = function ($source) use ($searchPattern) {
                 return (bool) preg_match($searchPattern, $source);

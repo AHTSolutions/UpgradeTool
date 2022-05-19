@@ -43,12 +43,12 @@ class SearchManager
      *
      * @return array
      */
-    public function getClassDependencies(string $searchPattern): array
+    public function getClassDependencies(string $vendorName): array
     {
         $result = [];
 
         foreach ($this->usedAreas as $area) {
-            $infoByArea = $this->getDependenciesByArea($searchPattern, $area);
+            $infoByArea = $this->getDependenciesByArea($vendorName, $area);
             $result = $this->mergeData($result, $infoByArea);
         }
 
@@ -61,13 +61,13 @@ class SearchManager
      *
      * @return array
      */
-    protected function getDependenciesByArea(string $searchPattern, string $code): array
+    protected function getDependenciesByArea(string $vendorName, string $code): array
     {
         $result = [];
 
         foreach ($this->getFinders() as $finder) {
             $finder->setAreaCode($code);
-            $result = $this->mergeData($result, $finder->getUsedClasses($searchPattern));
+            $result = $this->mergeData($result, $finder->getUsedClasses($vendorName));
         }
 
         return $result;

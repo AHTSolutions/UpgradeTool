@@ -33,11 +33,12 @@ class ExternalDependencies implements FinderInterface
     /**
      * @inheriDoc
      *
-     * @param string $searchPattern
+     * @param string $vendorName
      */
-    public function getUsedClasses(string $searchPattern): array
+    public function getUsedClasses(string $vendorName): array
     {
         if ($this->area) {
+            $searchPattern = $this->prepareSearchPatternByName($vendorName);
             $config = $this->configExtractor->getDiConfig($this->area);
             $result = [];
 

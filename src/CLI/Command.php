@@ -91,7 +91,7 @@ class Command extends AbstractCommand
         //2. prepare list with classes
         $this->progressBar->setMessage('Searching dependencies');
         $this->progressBar->display();
-        $preparedClasses = $this->searchManager->getClassDependencies($this->config->getSearchPattern());
+        $preparedClasses = $this->searchManager->getClassDependencies($this->config->getSearchVendorName());
         $this->progressBar->advance();
 
         //3. compare depended classes and files

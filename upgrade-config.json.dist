@@ -1,7 +1,7 @@
 {
   "previous_vendor": "previous_project/vendor",
   "result_file": "project_dir/var/dep_result.txt",
-  "class_pattern": "/^YOUR_VENDOR\\\\.+$/",
+  "vendor_name": "YOUR_VENDOR",
   "used_areas": "all",
   "compare_command": "diff"
 }

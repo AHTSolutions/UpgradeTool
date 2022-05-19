@@ -61,14 +61,15 @@ class ParentClasses implements FinderInterface
      * @inheriDoc
      *
      * @param string $searchPattern
+     * @param string $vendorName
      */
-    public function getUsedClasses(string $searchPattern): array
+    public function getUsedClasses(string $vendorName): array
     {
         $result = [];
 
         if ($this->area === Area::AREA_GLOBAL) {
-            $usedFiles = $this->getFiles($searchPattern);
-
+            $usedFiles = $this->getFiles($vendorName);
+            $searchPattern = '/^' . ucfirst($vendorName) . '\\\\.+$/';
             foreach ($usedFiles as $file) {
                 $classInfo = $this->getClassesFromFile($file, $searchPattern);
 
@@ -103,19 +104,21 @@ class ParentClasses implements FinderInterface
 
     /**
      * @param string $searchPattern
+     * @param string $vendorName
      *
      * @return array
      */
-    protected function getFiles(string $searchPattern): array
+    protected function getFiles(string $vendorName): array
     {
         $result = [];
-        $searchPattern = $this->convertClPatternToFlPattern($searchPattern);
 
-        if ($searchPattern) {
-            foreach ($this->dirs as $sourceDir) {
-                $files = $this->directoryScanner->scan($this->projectDir . $sourceDir, ['php' => $searchPattern], $this->excludedPatterns);
-                $result = array_merge($result, $files['php'] ?? []);
-            }
+        foreach ($this->dirs as $sourceDir) {
+            $files = $this->directoryScanner->scan(
+                $this->projectDir . $sourceDir,
+                ['php' => $this->prepareSearchPattern($vendorName)],
+                $this->excludedPatterns
+            );
+            $result = array_merge($result, $files['php'] ?? []);
         }
 
         return $result;
@@ -157,21 +160,23 @@ class ParentClasses implements FinderInterface
 
     /**
      * @param string $pattern
+     * @param string $vendorName
      *
      * @return string|null
      */
-    protected function convertClPatternToFlPattern(string $pattern): ?string
+    protected function prepareSearchPattern(string $vendorName): string
     {
-        if (preg_match('#\w+#', $pattern, $matches)) {
-            return isset($matches[0]) ? '#' . $matches[0] . '.*\.php$#' : null;
-        }
+        $vendorName = ucfirst($vendorName);
+        $firstLetter = mb_substr($vendorName, 0, 1);
+        $otherPart = mb_substr($vendorName, 1);
 
-        return null;
+        return '#[' . $firstLetter . ',' . mb_strtolower($firstLetter) . ']' . $otherPart . '.*\.php$#';
     }
 
     /**
      * @param string $class
      * @param string $searchPattern
+     *
      * @return string|null
      */
     protected function getParentClassName(string $class, string $searchPattern): ?string
