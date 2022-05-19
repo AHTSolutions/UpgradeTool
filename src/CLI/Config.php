@@ -14,7 +14,7 @@ class Config
     const PREVIOUS_VERSION_VENDOR   = 'previous_vendor';
     const OUTPUT_FORMAT             = 'format';
     const RESULT_FILE_PATH          = 'result_file';
-    const CLASS_PATTERN             = 'class_pattern';
+    const SEARCH_VENDOR_NAME        = 'vendor_name';
     const USED_AREAS                = 'used_areas';
     const COMPARE_COMMAND           = 'compare_command';
     const CONFIG_FILE               = 'conf';
@@ -33,12 +33,7 @@ class Config
     /**
      * @var string|null
      */
-    private $searchPattern;
-
-    /**
-     * @var string
-     */
-    private $currentDir;
+    private $searchVendorName;
 
     /**
      * @var string|null
@@ -68,7 +63,7 @@ class Config
         return [
             new InputOption(
                 self::PREVIOUS_VERSION_VENDOR,
-                'ven',
+                'd',
                 InputOption::VALUE_OPTIONAL,
                 'Absolute path for previous version vendor'
             ),
@@ -86,14 +81,14 @@ class Config
                 TxtSaver::TYPE
             ),
            new InputOption(
-               self::CLASS_PATTERN,
-               'pt',
+               self::SEARCH_VENDOR_NAME,
+               'p',
                InputOption::VALUE_OPTIONAL,
-               'Class search patterns',
+               'Vendor name for searching',
            ),
             new InputOption(
                 self::COMPARE_COMMAND,
-                'ccm',
+                'm',
                 InputOption::VALUE_OPTIONAL,
                 'Compare command',
                 'diff'
@@ -125,9 +120,9 @@ class Config
     /**
      * @return string
      */
-    public function getSearchPattern(): string
+    public function getSearchVendorName(): string
     {
-        return $this->searchPattern;
+        return $this->searchVendorName;
     }
 
     /**
@@ -177,8 +172,8 @@ class Config
             $this->readConfigurationFile($file);
         }
 
-        if ($input->getOption(self::CLASS_PATTERN)) {
-            $this->searchPattern = $input->getOption(self::CLASS_PATTERN);
+        if ($input->getOption(self::SEARCH_VENDOR_NAME)) {
+            $this->searchVendorName = $input->getOption(self::SEARCH_VENDOR_NAME);
         }
 
         if ($input->getOption(self::PREVIOUS_VERSION_VENDOR)) {
@@ -222,7 +217,7 @@ class Config
             $data = @json_decode($jsonContentLine, true);
 
             if (is_array($data) && $data) {
-                $this->searchPattern = $data[self::CLASS_PATTERN] ?? null;
+                $this->searchVendorName = $data[self::SEARCH_VENDOR_NAME] ?? null;
 
                 if (isset($data[self::USED_AREAS])) {
                     $this->usedAreas = $this->convertAreas($data[self::USED_AREAS]);
@@ -276,8 +271,8 @@ class Config
             throw new \Exception('Please specify a correct previous vendor directory.');
         }
 
-        if (empty($this->searchPattern)) {
-            throw new \Exception('Incorrect search pattern. Please provide correct search pattern.');
+        if (empty($this->searchVendorName)) {
+            throw new \Exception('Incorrect vendor name for searching. Please provide correct name.');
         }
 
         if ($this->usedAreas === null) {
