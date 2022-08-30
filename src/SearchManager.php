@@ -9,22 +9,19 @@ use AHTSolutions\UpgradeTool\Finders\FindersFactory;
 
 class SearchManager
 {
-    const MAIN_AREA = 'global';
-
-    /**
-     * @var FindersFactory
-     */
-    protected $findersFactory;
+    public const MAIN_AREA = 'global';
+    
+    protected FindersFactory $findersFactory;
 
     /**
      * @var string[]
      */
-    private $usedAreas = [];
+    private array $usedAreas;
 
     /**
      * @var FinderInterface[]|null
      */
-    private $findersTypeMap;
+    private ?array $findersTypeMap;
 
     /**
      * @param array $areas
@@ -39,7 +36,7 @@ class SearchManager
     }
 
     /**
-     * @param string $searchPattern
+     * @param string $vendorName
      *
      * @return array
      */
@@ -56,7 +53,7 @@ class SearchManager
     }
 
     /**
-     * @param string $searchPattern
+     * @param string $vendorName
      * @param string $code
      *
      * @return array
@@ -119,7 +116,7 @@ class SearchManager
      */
     protected function getFinders(): array
     {
-        if ($this->findersTypeMap === null) {
+        if (!isset($this->findersTypeMap)) {
             $this->findersTypeMap = $this->findersFactory->create();
         }
 

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace AHTSolutions\UpgradeTool\DataSaver;
 
+use Exception;
+use RuntimeException;
+
 class SaverFactory
 {
-    /**
-     * @var string|null
-     */
-    private $compareCommand;
+    private ?string $compareCommand;
 
     /**
      * @var string[]
      */
-    private $typeMap = [
+    private array $typeMap = [
         TxtSaver::TYPE => TxtSaver::class
     ];
 
@@ -29,13 +29,13 @@ class SaverFactory
     /**
      * @param string $type
      * @return SaverInterface
-     * @throws \Exception
+     * @throws Exception
      */
     public function create(string $type): SaverInterface
     {
         if (isset($this->typeMap[$type])) {
             return new $this->typeMap[$type]($this->compareCommand);
         }
-        throw new \Exception('Incorrect type!');
+        throw new RuntimeException('Incorrect type!');
     }
 }

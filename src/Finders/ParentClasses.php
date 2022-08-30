@@ -7,40 +7,37 @@ namespace AHTSolutions\UpgradeTool\Finders;
 use AHTSolutions\UpgradeTool\Finders\ParentClasses\PhpFileScanner;
 use Magento\Framework\App\Area;
 use Magento\Setup\Module\Di\Code\Scanner\DirectoryScanner;
+use ReflectionClass;
+use Throwable;
+use function array_merge;
+use function array_unique;
+use function count;
+use function ltrim;
+use function mb_substr;
+use function preg_match;
+use function ucfirst;
 
 class ParentClasses implements FinderInterface
 {
-    const TYPE = 'parent_classes';
+    public const TYPE = 'parent_classes';
 
-    /**
-     * @var DirectoryScanner
-     */
-    protected $directoryScanner;
+    protected DirectoryScanner $directoryScanner;
 
-    /**
-     * @var PhpFileScanner
-     */
-    protected $phpFileScanner;
+    protected PhpFileScanner $phpFileScanner;
 
-    /**
-     * @var string
-     */
-    private $area;
+    private string $area;
 
     /**
      * @var string[]
      */
-    private $excludedPatterns = ['#\/Test\/#', '#.*Test\.php$#'];
+    private array $excludedPatterns = ['#\/Test\/#', '#.*Test\.php$#'];
 
     /**
      * @var string[]
      */
-    private $dirs = ['/app/code', '/vendor'];
+    private array $dirs = ['/app/code', '/vendor'];
 
-    /**
-     * @var string
-     */
-    private $projectDir;
+    private string $projectDir;
 
     /**
      * @param string $projectDir
@@ -53,15 +50,16 @@ class ParentClasses implements FinderInterface
         ?PhpFileScanner $phpFileScanner = null
     ) {
         $this->projectDir = $projectDir;
-        $this->directoryScanner = $directoryScanner === null ? new DirectoryScanner() : $directoryScanner;
-        $this->phpFileScanner = $phpFileScanner === null ? new PhpFileScanner() : $phpFileScanner;
+        $this->directoryScanner = $directoryScanner ?? new DirectoryScanner();
+        $this->phpFileScanner = $phpFileScanner ?? new PhpFileScanner();
     }
 
     /**
      * @inheriDoc
      *
-     * @param string $searchPattern
      * @param string $vendorName
+     *
+     * @return array
      */
     public function getUsedClasses(string $vendorName): array
     {
@@ -74,7 +72,7 @@ class ParentClasses implements FinderInterface
                 $classInfo = $this->getClassesFromFile($file, $searchPattern);
 
                 if ($classInfo) {
-                    list($investigatedClass, $depClasses) = $classInfo;
+                    [$investigatedClass, $depClasses] = $classInfo;
 
                     if (!isset($result[$investigatedClass])) {
                         $result[$investigatedClass] = [
@@ -94,6 +92,8 @@ class ParentClasses implements FinderInterface
      * @inheriDoc
      *
      * @param string $code
+     *
+     * @return FinderInterface
      */
     public function setAreaCode(string $code): FinderInterface
     {
@@ -103,7 +103,6 @@ class ParentClasses implements FinderInterface
     }
 
     /**
-     * @param string $searchPattern
      * @param string $vendorName
      *
      * @return array
@@ -118,17 +117,15 @@ class ParentClasses implements FinderInterface
                 ['php' => $this->prepareSearchPattern($vendorName)],
                 $this->excludedPatterns
             );
-            $result = array_merge($result, $files['php'] ?? []);
+            $result[] = $files['php'] ?? [];
         }
 
-        return $result;
+        return array_merge(...$result);
     }
 
     /**
      * @param string $file
      * @param string $searchPattern
-     *
-     * @throws \ReflectionException
      *
      * @return array|null
      */
@@ -159,10 +156,9 @@ class ParentClasses implements FinderInterface
     }
 
     /**
-     * @param string $pattern
      * @param string $vendorName
      *
-     * @return string|null
+     * @return string
      */
     protected function prepareSearchPattern(string $vendorName): string
     {
@@ -182,13 +178,13 @@ class ParentClasses implements FinderInterface
     protected function getParentClassName(string $class, string $searchPattern): ?string
     {
         try {
-            $refClass = new \ReflectionClass('\\' . $class);
+            $refClass = new ReflectionClass('\\' . $class);
             $parentClass = $refClass->getParentClass();
 
             if ($parentClass && !preg_match($searchPattern, $parentClass->getName())) {
                 return $parentClass->getName();
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             //skip this class
         }
 

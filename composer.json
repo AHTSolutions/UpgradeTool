@@ -2,7 +2,7 @@
     "name": "ahtsolutions/upgradetool",
     "description": "Tool to compare your code with updates in magento core",
     "type": "magento-component",
-    "version": "0.0.2-dev",
+    "version": "1.0.0",
     "license": "MIT",
     "authors": [
         {
@@ -16,10 +16,15 @@
         "sort-packages": true
     },
     "require": {
-        "php": "~7.1.0|~7.2.0|~7.4.0|~8.1.0",
+        "php": "^7.4 || ~8.0.0 || ~8.1.0",
         "symfony/console": "~4.4.0",
         "symfony/process": "~4.4.0",
-        "magento/framework": "^100|^101|^102|^103"
+        "magento/framework": "^100|^101|^102|^103",
+        "ext-mbstring": "*"
+    }
+    ,
+    "require-dev": {
+        "roave/security-advisories": "dev-latest"
     },
     "autoload": {
         "psr-4": {

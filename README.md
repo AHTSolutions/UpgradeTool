@@ -24,12 +24,12 @@ First of all it requires preparation of project for upgrade and investigation:
 Add this configuration to `composer.json` file:
 ```json
   "require-dev": {
-    "ahtsolutions/upgradetool": "8.1.x-dev",
+    "ahtsolutions/upgradetool": "dev-master",
   },
   "repositories": {
       "ahtsolutions/upgradetool": {
           "type": "git",
-          "url": "https://github.com/Polar77/UpgradeTool.git"
+          "url": "https://github.com/AHTSolutions/UpgradeTool.git"
       }
   }
 ```

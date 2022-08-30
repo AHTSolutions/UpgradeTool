@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AHTSolutions\UpgradeTool\DataSaver;
 
+use stdClass;
+
 interface SaverInterface
 {
     /**
@@ -14,10 +16,10 @@ interface SaverInterface
 
     /**
      * @param $f
-     * @param \stdClass $dataObj
+     * @param stdClass $dataObj
      * @return $this
      */
-    public function saveInfoToFile($f, \stdClass $dataObj): self;
+    public function saveInfoToFile($f, stdClass $dataObj): self;
 
 
 

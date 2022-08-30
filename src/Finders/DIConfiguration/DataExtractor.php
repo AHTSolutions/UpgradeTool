@@ -8,15 +8,9 @@ use AHTSolutions\UpgradeTool\CodeGeneration\Filesystem;
 
 class DataExtractor
 {
-    /**
-     * @var Filesystem
-     */
-    protected $fileSystem;
+    protected Filesystem $fileSystem;
 
-    /**
-     * @var array
-     */
-    private $config = [];
+    private array $config = [];
 
     /**
      * @param Filesystem|null $filesystem
