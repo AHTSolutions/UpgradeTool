@@ -9,6 +9,7 @@ use AHTSolutions\UpgradeTool\CodeGeneration\SourcesChecker;
 use AHTSolutions\UpgradeTool\DataSaver;
 use AHTSolutions\UpgradeTool\SearchManager;
 use AHTSolutions\UpgradeTool\UpdatingDataProvider;
+use Exception;
 use Magento\Framework\Autoload\AutoloaderRegistry;
 use Symfony\Component\Console\Command\Command as AbstractCommand;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -20,38 +21,19 @@ class Command extends AbstractCommand
 {
     const NAME = 'check-updates';
 
-    /**
-     * @var Config
-     */
-    protected $config;
+    protected Config $config;
 
-    /**
-     * @var SourcesChecker
-     */
-    protected $sourceChecker;
+    protected SourcesChecker $sourceChecker;
 
-    /** @var ProgressBar */
-    protected $progressBar;
+    protected ProgressBar $progressBar;
 
-    /**
-     * @var GenerateCommand
-     */
-    protected $generateCommand;
+    protected GenerateCommand $generateCommand;
 
-    /**
-     * @var SearchManager
-     */
-    protected $searchManager;
+    protected SearchManager $searchManager;
 
-    /**
-     * @var UpdatingDataProvider
-     */
-    protected $upgradingDataProvider;
+    protected UpdatingDataProvider $upgradingDataProvider;
 
-    /**
-     * @var DataSaver
-     */
-    protected $dataSaver;
+    protected DataSaver $dataSaver;
 
     /**
      * @inheritDoc
@@ -68,7 +50,7 @@ class Command extends AbstractCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int|void
-     * @throws \Exception
+     * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -111,7 +93,7 @@ class Command extends AbstractCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function init(InputInterface $input, OutputInterface $output): void
     {
@@ -128,9 +110,9 @@ class Command extends AbstractCommand
         );
         $saverFactory = new DataSaver\SaverFactory($this->config->getCompareCommand());
         $this->dataSaver = new DataSaver(
-            $saverFactory,
             $this->config->getResultFilePath(),
-            $this->config->getOutputFormat()
+            $this->config->getOutputFormat(),
+            $saverFactory
         );
     }
 }

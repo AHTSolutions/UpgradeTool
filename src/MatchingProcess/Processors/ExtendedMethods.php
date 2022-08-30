@@ -6,23 +6,16 @@ namespace AHTSolutions\UpgradeTool\MatchingProcess\Processors;
 
 use AHTSolutions\UpgradeTool\Finders\ParentClasses\PhpFileScanner;
 use AHTSolutions\UpgradeTool\MatchingProcess\Processors\ExtendedMethods\DataExtractor;
+use ReflectionClass;
+use ReflectionMethod;
 
 class ExtendedMethods implements ProcessorInterface
 {
-    /**
-     * @var PhpFileScanner
-     */
-    protected $fileScanner;
+    protected PhpFileScanner $fileScanner;
 
-    /**
-     * @var DataExtractor
-     */
-    protected $dataExtractor;
+    protected DataExtractor $dataExtractor;
 
-    /**
-     * @var array
-     */
-    private $extendedMethods = [];
+    private array $extendedMethods = [];
 
     /**
      * @param PhpFileScanner|null $fileScanner
@@ -32,8 +25,8 @@ class ExtendedMethods implements ProcessorInterface
         ?PhpFileScanner $fileScanner = null,
         ?DataExtractor $dataExtractor = null
     ) {
-        $this->fileScanner = $fileScanner !== null ? $fileScanner : new PhpFileScanner();
-        $this->dataExtractor = $dataExtractor !== null ? $dataExtractor : new DataExtractor();
+        $this->fileScanner = $fileScanner ?? new PhpFileScanner();
+        $this->dataExtractor = $dataExtractor ?? new DataExtractor();
     }
 
     /**
@@ -85,7 +78,7 @@ class ExtendedMethods implements ProcessorInterface
     protected function findMethods(string $className): array
     {
         try {
-            $origClass = new \ReflectionClass($className);
+            $origClass = new ReflectionClass($className);
             $parentClass = $origClass->getParentClass();
 
             if ($parentClass) {
@@ -95,7 +88,7 @@ class ExtendedMethods implements ProcessorInterface
                 foreach ($methods as $method) {
                     if (
                         !$method->isAbstract()
-                        && $method->class == $origClass->getName()
+                        && $method->class === $origClass->getName()
                         && ($parentMethod = $this->getOriginalParentMethod($parentClass, $method))
                     ) {
                         $result[$parentMethod->class][] = $parentMethod;
@@ -112,17 +105,17 @@ class ExtendedMethods implements ProcessorInterface
     }
 
     /**
-     * @param \ReflectionClass $class
-     * @param \ReflectionMethod $method
+     * @param ReflectionClass $class
+     * @param ReflectionMethod $method
      *
-     * @return \ReflectionMethod|null
+     * @return ReflectionMethod|null
      */
-    protected function getOriginalParentMethod(\ReflectionClass $class, \ReflectionMethod $method): ?\ReflectionMethod
+    protected function getOriginalParentMethod(ReflectionClass $class, ReflectionMethod $method): ?ReflectionMethod
     {
         try {
             $parentMethod = $class->getMethod($method->getName());
 
-            return $parentMethod->class == $class->getName()
+            return $parentMethod->class === $class->getName()
                 ? $parentMethod
                 : $this->getOriginalParentMethod($class->getParentClass(), $method);
         } catch (\ReflectionException $ex) {

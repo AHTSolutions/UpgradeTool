@@ -11,6 +11,8 @@ class FilesWithoutComments implements ProcessorInterface
      *
      * @param string $previousFile
      * @param string $currentFile
+     *
+     * @return bool
      */
     public function checkFiles(string $previousFile, string $currentFile): bool
     {
@@ -19,13 +21,11 @@ class FilesWithoutComments implements ProcessorInterface
         $prHash = hash('sha1', $this->cleanPHPComments($prContent));
         $crHash = hash('sha1', $this->cleanPHPComments($crContent));
 
-        return $prHash == $crHash;
+        return $prHash === $crHash;
     }
 
     /**
      * @inheriDoc
-     *
-     * @param string $className
      */
     public function setOriginalClassName(?string $className)
     {
@@ -46,9 +46,9 @@ class FilesWithoutComments implements ProcessorInterface
             if (is_string($token)) {
                 $result .= $token;
             } else {
-                list($ident, $txt) = $token;
+                [$ident, $txt] = $token;
 
-                if (!in_array($ident, [T_COMMENT, T_DOC_COMMENT, T_WHITESPACE])) {
+                if (!in_array($ident, [T_COMMENT, T_DOC_COMMENT, T_WHITESPACE], true)) {
                     $result .= $txt;
                 }
             }

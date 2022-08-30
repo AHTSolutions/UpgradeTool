@@ -5,22 +5,24 @@ declare(strict_types=1);
 namespace AHTSolutions\UpgradeTool\CLI;
 
 use AHTSolutions\UpgradeTool\DataSaver\TxtSaver;
+use Exception;
 use Magento\Framework\App\Area;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 class Config
 {
-    const PREVIOUS_VERSION_VENDOR   = 'previous_vendor';
-    const OUTPUT_FORMAT             = 'format';
-    const RESULT_FILE_PATH          = 'result_file';
-    const SEARCH_VENDOR_NAME        = 'vendor_name';
-    const USED_AREAS                = 'used_areas';
-    const COMPARE_COMMAND           = 'compare_command';
-    const CONFIG_FILE               = 'conf';
+    public const PREVIOUS_VERSION_VENDOR   = 'previous_vendor';
+    public const OUTPUT_FORMAT             = 'format';
+    public const RESULT_FILE_PATH          = 'result_file';
+    public const SEARCH_VENDOR_NAME        = 'vendor_name';
+    public const USED_AREAS                = 'used_areas';
+    public const COMPARE_COMMAND           = 'compare_command';
+    public const CONFIG_FILE               = 'conf';
 
-    const DEFAULT_AREA = 'all';
-    const AREA_LIST = [
+    public const DEFAULT_AREA = 'all';
+    public const AREA_LIST = [
         Area::AREA_GLOBAL, Area::AREA_FRONTEND, Area::AREA_ADMINHTML,
         Area::AREA_CRONTAB, Area::AREA_WEBAPI_REST, Area::AREA_WEBAPI_SOAP,
         Area::AREA_GRAPHQL, ];
@@ -28,32 +30,17 @@ class Config
     /**
      * @var string[]|null
      */
-    private $usedAreas;
+    private ?array $usedAreas;
 
-    /**
-     * @var string|null
-     */
-    private $searchVendorName;
+    private ?string $searchVendorName;
 
-    /**
-     * @var string|null
-     */
-    private $previousVendorDir;
+    private ?string $previousVendorDir;
 
-    /**
-     * @var string|null
-     */
-    private $resultFile;
+    private ?string $resultFile;
 
-    /**
-     * @var string
-     */
-    private $outputFormat;
+    private ?string $outputFormat;
 
-    /**
-     * @var string
-     */
-    private $compareCommand;
+    private ?string $compareCommand;
 
     /**
      * @return array
@@ -160,7 +147,7 @@ class Config
     /**
      * @param InputInterface $input
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @return void
      */
@@ -240,12 +227,12 @@ class Config
         if ($info) {
             $areas = explode(',', $info);
 
-            if (count($areas) == 1) {
+            if (count($areas) === 1) {
                 $singleArea = trim(array_pop($areas));
 
-                if ($singleArea == self::DEFAULT_AREA) {
+                if ($singleArea === self::DEFAULT_AREA) {
                     $areas = self::AREA_LIST;
-                } elseif (in_array($singleArea, self::AREA_LIST)) {
+                } elseif (in_array($singleArea, self::AREA_LIST, true)) {
                     $areas = [$singleArea];
                 } else {
                     return null;
@@ -261,18 +248,18 @@ class Config
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @return void
      */
     protected function validateConfig(): void
     {
         if ($this->previousVendorDir === null) {
-            throw new \Exception('Please specify a correct previous vendor directory.');
+            throw new RuntimeException('Please specify a correct previous vendor directory.');
         }
 
         if (empty($this->searchVendorName)) {
-            throw new \Exception('Incorrect vendor name for searching. Please provide correct name.');
+            throw new RuntimeException('Incorrect vendor name for searching. Please provide correct name.');
         }
 
         if ($this->usedAreas === null) {

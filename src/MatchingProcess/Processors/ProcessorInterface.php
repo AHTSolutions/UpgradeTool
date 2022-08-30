@@ -14,7 +14,7 @@ interface ProcessorInterface
     public function checkFiles(string $previousFile, string $currentFile): bool;
 
     /**
-     * @param string $className
+     * @param string|null $className
      * @return mixed
      */
     public function setOriginalClassName(?string $className);

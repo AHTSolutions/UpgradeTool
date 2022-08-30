@@ -10,17 +10,11 @@ class InternalDependencies implements FinderInterface
 {
     use ClassNamingTrait;
 
-    const TYPE = 'internal_dependencies';
+    public const TYPE = 'internal_dependencies';
 
-    /**
-     * @var DataExtractor
-     */
-    protected $configExtractor;
+    protected DataExtractor $configExtractor;
 
-    /**
-     * @var string|null
-     */
-    private $area;
+    private ?string $area;
 
     /**
      * @param DataExtractor $configExtractor
@@ -32,8 +26,6 @@ class InternalDependencies implements FinderInterface
 
     /**
      * @inheriDoc
-     *
-     * @param string $vendorName
      */
     public function getUsedClasses(string $vendorName): array
     {
@@ -47,12 +39,12 @@ class InternalDependencies implements FinderInterface
             $usedConfiguration = [];
             $searchPattern = $this->prepareSearchPatternByName($vendorName);
 
-            $searchFunction = function ($source) use ($searchPattern) {
+            $searchFunction = static function ($source) use ($searchPattern) {
                 return (bool) preg_match($searchPattern, $source);
             };
 
             if (\count($arguments)) {
-                $usedConfiguration = array_filter($arguments, function ($key) use ($searchFunction, $types) {
+                $usedConfiguration = array_filter($arguments, static function ($key) use ($searchFunction, $types) {
                     $flag = $searchFunction($key);
 
                     if (!$flag && isset($types[$key])) {
@@ -80,7 +72,7 @@ class InternalDependencies implements FinderInterface
                             }
                             $list = &$result[$mainClass][self::TYPE][$this->area];
 
-                            if (!in_array($usedClass, $list)) {
+                            if (!in_array($usedClass, $list, true)) {
                                 $list[] = $usedClass;
                             }
                         }
@@ -96,8 +88,6 @@ class InternalDependencies implements FinderInterface
 
     /**
      * @inheriDoc
-     *
-     * @param string $code
      */
     public function setAreaCode(string $code): self
     {

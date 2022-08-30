@@ -7,35 +7,24 @@ namespace AHTSolutions\UpgradeTool\DataSaver;
 use AHTSolutions\UpgradeTool\Finders\DIConfiguration\ExternalDependencies;
 use AHTSolutions\UpgradeTool\Finders\DIConfiguration\InternalDependencies;
 use AHTSolutions\UpgradeTool\Finders\ParentClasses;
+use stdClass;
 
 class TxtSaver implements SaverInterface
 {
-    const TYPE = 'txt';
+    public const TYPE = 'txt';
 
-    /**
-     * @var string
-     */
-    protected $className;
+    protected string $className;
 
-    /**
-     * @var bool
-     */
-    private $headerAdded = false;
+    private bool $headerAdded = false;
 
-    /**
-     * @var string|null
-     */
-    private $compareCommand;
+    private ?string $compareCommand;
 
-    /**
-     * @var bool
-     */
-    private $firstLineFlag = false;
+    private bool $firstLineFlag = false;
 
     /**
      * @var string[]
      */
-    private $typeTemplates = [
+    private array $typeTemplates = [
         ExternalDependencies::TYPE => "This class '%s' depends from researched class in '%s' area, please check:",
         InternalDependencies::TYPE => "Researched class depends from this class '%s' in '%s' area, please check:",
         ParentClasses::TYPE => "Researched class has changed parent class '%s' in '%s' area, please check:",
@@ -64,37 +53,39 @@ class TxtSaver implements SaverInterface
 
     /**
      * @param $f
-     * @param \stdClass $dataObj
+     * @param stdClass $dataObj
      * @return SaverInterface
      */
-    public function saveInfoToFile($f, \stdClass $dataObj): SaverInterface
+    public function saveInfoToFile($f, stdClass $dataObj): SaverInterface
     {
         $lineToSave = $this->formatData($dataObj);
 
         if (!$this->headerAdded) {
             if ($this->firstLineFlag) {
-                fputs($f, "\n\n");
+                fwrite($f, "\n\n");
             }
-            fputs($f, $this->getHeaderLine());
+            fwrite($f, $this->getHeaderLine());
             $this->headerAdded = true;
             $this->firstLineFlag = true;
         }
-        fputs($f, $lineToSave);
+        fwrite($f, $lineToSave);
 
         return $this;
     }
 
     /**
-     * @param \stdClass $dataObj
+     * @param stdClass $dataObj
      * @return string
      */
-    protected function formatData(\stdClass $dataObj): string
+    protected function formatData(stdClass $dataObj): string
     {
         $message = sprintf($this->typeTemplates[$dataObj->type] ?? '', $dataObj->className, $dataObj->area);
 
         if ($dataObj->previousFile) {
             return "\t {$message} \n \t\t{$this->compareCommand} {$dataObj->previousFile} {$dataObj->currentFile} \n";
-        } elseif ($dataObj->currentFile) {
+        }
+
+        if ($dataObj->currentFile) {
             return "\t {$message} File '{$dataObj->currentFile}' exists only in new version. \n";
         }
 
