@@ -8,20 +8,14 @@ use Magento\Framework\Autoload\AutoloaderInterface;
 
 class ClassNameCleaner
 {
-    /**
-     * @var AutoloaderInterface
-     */
-    protected $autoloader;
+    protected AutoloaderInterface $autoloader;
 
-    /**
-     * @var array
-     */
-    protected $alreadyMappedClasses = [];
+    protected array $alreadyMappedClasses = [];
 
     /**
      * @var string[]
      */
-    private $cleanPatterns = [
+    private array $cleanPatterns = [
         '/\\\\.+\\\\Interceptor$/' => '/\\\\Interceptor$/',
         '/\\\\.+\\\\Proxy$/' => '/\\\\Proxy$/',
         '/\\\\.+Factory$/' => '/Factory$/',

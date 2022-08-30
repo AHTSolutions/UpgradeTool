@@ -5,29 +5,24 @@ declare(strict_types=1);
 namespace AHTSolutions\UpgradeTool;
 
 use AHTSolutions\UpgradeTool\DataSaver\SaverFactory;
+use Exception;
 
 class DataSaver
 {
-    /**
-     * @var DataSaver\SaverInterface
-     */
-    protected $saver;
+    protected DataSaver\SaverInterface $saver;
+
+    private string $resultFilePath;
 
     /**
-     * @var string
-     */
-    private $resultFilePath;
-
-    /**
-     * @param SaverFactory|null $saverFactory
      * @param string $resultFilePath
      * @param string $saverType
-     * @throws \Exception
+     * @param SaverFactory|null $saverFactory
+     * @throws Exception
      */
     public function __construct(
-        ?SaverFactory $saverFactory = null,
         string $resultFilePath,
-        string $saverType
+        string $saverType,
+        ?SaverFactory $saverFactory = null
     ) {
         $this->resultFilePath = $resultFilePath;
         if ($saverFactory === null) {
@@ -39,7 +34,7 @@ class DataSaver
     /**
      * @param array $data
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function saveDataToFile(array $data): void
     {
@@ -55,13 +50,13 @@ class DataSaver
 
     /**
      * @return resource
-     * @throws \Exception
+     * @throws Exception
      */
     protected function createFile()
     {
-        $f = fopen($this->resultFilePath, 'w+');
+        $f = fopen($this->resultFilePath, 'wb+');
         if (!$f) {
-            throw new \Exception('Can not create file with this path: '. $this->resultFilePath);
+            throw new Exception('Can not create file with this path: '. $this->resultFilePath);
         }
         return $f;
 

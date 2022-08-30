@@ -18,17 +18,21 @@ class PhpFileScanner
         $tokens = token_get_all(file_get_contents($file));
         $count = count($tokens);
 
-        for ($tokenIterator = 0; $tokenIterator < $count; $tokenIterator++) {
-            if ($tokens[$tokenIterator][0] == T_NAMESPACE) {
+        foreach ($tokens as $tokenIterator => $tokenIteratorValue) {
+            if (!isset($tokenIteratorValue[0])) {
+                continue;
+            }
+
+            if ($tokenIteratorValue[0] === T_NAMESPACE) {
                 $namespaceParts[] = $this->fetchNamespace($tokenIterator, $count, $tokens);
             }
 
-            if (($tokens[$tokenIterator][0] == T_CLASS || $tokens[$tokenIterator][0] == T_INTERFACE)
-                && $tokens[$tokenIterator - 1][0] != T_DOUBLE_COLON
+            if (($tokenIteratorValue[0] === T_CLASS || $tokenIteratorValue[0] === T_INTERFACE)
+                && $tokens[$tokenIterator - 1][0] !== T_DOUBLE_COLON
             ) {
-                $class = $this->fetchClass(join('', $namespaceParts), $tokenIterator, $count, $tokens);
+                $class = $this->fetchClass(implode('', $namespaceParts), $tokenIterator, $count, $tokens);
 
-                if ($class !== null && !in_array($class, $classes)) {
+                if ($class !== null && !in_array($class, $classes, true)) {
                     $classes[] = $class;
                 }
             }
@@ -57,7 +61,7 @@ class PhpFileScanner
             }
         }
 
-        return join('', $namespaceParts);
+        return implode('', $namespaceParts);
     }
 
     /**
@@ -70,7 +74,10 @@ class PhpFileScanner
      */
     protected function fetchClass(string $namespace, int $tokenIterator, int $count, array $tokens): ?string
     {
-        if (isset($tokens[$tokenIterator - 2]) && is_array($tokens[$tokenIterator - 2]) && $tokens[$tokenIterator - 2][0] === T_NEW) {
+        if (isset($tokens[$tokenIterator - 2])
+            && is_array($tokens[$tokenIterator - 2])
+            && $tokens[$tokenIterator - 2][0] === T_NEW)
+        {
             return null;
         }
 

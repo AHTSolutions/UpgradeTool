@@ -11,7 +11,7 @@ class FileContent implements ProcessorInterface
      */
     public function checkFiles(string $previousFile, string $currentFile): bool
     {
-        return sha1_file($previousFile) == sha1_file($currentFile);
+        return sha1_file($previousFile) === sha1_file($currentFile);
     }
 
     /**

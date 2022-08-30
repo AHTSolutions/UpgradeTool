@@ -8,15 +8,9 @@ use AHTSolutions\UpgradeTool\CLI\Config;
 
 class SourcesChecker
 {
-    /**
-     * @var Config
-     */
-    protected $cmConfig;
+    protected Config $cmConfig;
 
-    /**
-     * @var Filesystem
-     */
-    protected $generationFilesystem;
+    protected Filesystem $generationFilesystem;
 
     /**
      * @param Config $cmConfig
