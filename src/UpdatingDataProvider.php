@@ -10,30 +10,15 @@ use Magento\Framework\Autoload\AutoloaderInterface;
 
 class UpdatingDataProvider
 {
-    /**
-     * @var AutoloaderInterface
-     */
-    protected $autoloader;
+    protected AutoloaderInterface $autoloader;
 
-    /**
-     * @var ClassNameCleaner
-     */
-    protected $classNameCleaner;
+    protected ClassNameCleaner $classNameCleaner;
 
-    /**
-     * @var string
-     */
-    protected $previousVendorDir;
+    protected string $previousVendorDir;
 
-    /**
-     * @var string
-     */
-    protected $projectDir;
+    protected string $projectDir;
 
-    /**
-     * @var MatchingManager
-     */
-    protected $matchingManager;
+    protected MatchingManager $matchingManager;
 
     /**
      * @param AutoloaderInterface $autoloader
@@ -59,7 +44,7 @@ class UpdatingDataProvider
      */
     public function findClassChanges(array $classList): array
     {
-        list($preparedData, $notFoundedClasses) = $this->classNameCleaner->filterUsedClassNames($classList);
+        [$preparedData, $notFoundedClasses] = $this->classNameCleaner->filterUsedClassNames($classList);
         $result = [];
 
         if ($preparedData) {
@@ -67,7 +52,7 @@ class UpdatingDataProvider
                 foreach ($depInfo as $type => $areInfo) {
                     foreach ($areInfo as $areaCode => $list) {
                         foreach ($list as $usedClass) {
-                            list($currentFile, $previousFile) = $this->prepareFilesByClass($usedClass);
+                            [$currentFile, $previousFile] = $this->prepareFilesByClass($usedClass);
 
                             if ($previousFile && $currentFile) {
                                 $isEquals = $this->matchingManager->isFilesEquals(

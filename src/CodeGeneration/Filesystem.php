@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace AHTSolutions\UpgradeTool\CodeGeneration;
 
+use function file_exists;
+
 class Filesystem
 {
-    const GENERATION_DIR = 'generated';
-    const GENERATION_META_DIR = 'metadata';
+    public const GENERATION_DIR = 'generated';
+    public const GENERATION_META_DIR = 'metadata';
 
-    /**
-     * @var string
-     */
-    protected $generationDir = '';
+    protected string $generationDir = '';
 
     /**
      * @param string|null $generationDirPath
@@ -41,7 +40,7 @@ class Filesystem
     {
         $filePath = $this->getAbsoluteFilePath($filename);
 
-        return \file_exists($filePath);
+        return file_exists($filePath);
     }
 
     /**

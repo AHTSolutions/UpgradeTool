@@ -17,12 +17,12 @@ class MatchingManager
     /**
      * @var ProcessorInterface[]
      */
-    private $checkerListByType;
+    private array $checkerListByType;
 
     /**
      * @var FileContent
      */
-    private $fileContentChecker;
+    private FileContent $fileContentChecker;
 
     public function __construct()
     {

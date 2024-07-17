@@ -24,7 +24,7 @@ First of all it requires preparation of project for upgrade and investigation:
 Add this configuration to `composer.json` file:
 ```json
   "require-dev": {
-      "ahtsolutions/upgradetool": "dev-master",
+    "ahtsolutions/upgradetool": "dev-master",
   },
   "repositories": {
       "ahtsolutions/upgradetool": {

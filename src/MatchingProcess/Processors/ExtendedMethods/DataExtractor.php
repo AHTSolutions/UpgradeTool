@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace AHTSolutions\UpgradeTool\MatchingProcess\Processors\ExtendedMethods;
 
+use ReflectionMethod;
+
 class DataExtractor
 {
     /**
      * @param string $filePath
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      *
      * @return string
      */
-    public function extractMethodCode(string $filePath, \ReflectionMethod $method): string
+    public function extractMethodCode(string $filePath, ReflectionMethod $method): string
     {
         $tokens = $this->getCodeTokens($filePath);
         $methodStartPosition = $this->getMethodStartPosition($method, $tokens);
@@ -43,19 +45,17 @@ class DataExtractor
     }
 
     /**
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      * @param array $tokens
      *
      * @return int|null
      */
-    protected function getMethodStartPosition(\ReflectionMethod $method, array $tokens): ?int
+    protected function getMethodStartPosition(ReflectionMethod $method, array $tokens): ?int
     {
-        $cnt = count($tokens);
 
-        for ($iter = 0; $iter < $cnt; ++$iter) {
-            $token = $tokens[$iter];
+        foreach ($tokens as $iter => $token) {
 
-            if (is_array($token) && $token[0] == T_FUNCTION) {
+            if (isset($token[0]) && $token[0] === T_FUNCTION) {
                 $position = $this->checkMethodName(
                     $iter,
                     $tokens,
@@ -83,24 +83,24 @@ class DataExtractor
         for ($braceIter = $startPosition; $braceIter <= $startPosition + 100; ++$braceIter) {
             $token = $tokens[$braceIter];
 
-            if (is_string($token) && $token == '{') {
+            if ($token === '{') {
                 break;
             }
         }
 
-        if ($braceIter == $startPosition + 100) {
+        if ($braceIter === $startPosition + 100) {
             return null;
         }
         $braceCounter = 1;
 
-        while ($braceCounter != 0 && isset($tokens[$braceIter+1])) {
+        while ($braceCounter !== 0 && isset($tokens[$braceIter+1])) {
             $token = $tokens[++$braceIter];
 
-            if (is_string($token) && $token == '{') {
+            if ($token === '{') {
                 $braceCounter++;
             }
 
-            if (is_string($token) && $token == '}') {
+            if ($token === '}') {
                 $braceCounter--;
             }
         }
@@ -109,15 +109,17 @@ class DataExtractor
     }
 
     /**
-     * @param \ReflectionMethod $method
+     * @param ReflectionMethod $method
      *
      * @return int
      */
-    protected function getMethodTokenType(\ReflectionMethod $method): int
+    protected function getMethodTokenType(ReflectionMethod $method): int
     {
         if ($method->isPublic()) {
             return T_PUBLIC;
-        } elseif ($method->isProtected()) {
+        }
+
+        if ($method->isProtected()) {
             return T_PROTECTED;
         }
 
@@ -137,11 +139,11 @@ class DataExtractor
         for ($nameIter = $iter; $nameIter <= $iter + 10; $nameIter++) {
             $token = $tokens[$nameIter];
 
-            if (is_array($token) && $token[0] == T_STRING && $token[1] == $methodName) {
+            if (is_array($token) && $token[0] === T_STRING && $token[1] === $methodName) {
                 for ($startFunctionIter = $iter; $startFunctionIter > $iter - 20; --$startFunctionIter) {
                     $token = $tokens[$startFunctionIter] ?? null;
 
-                    if (is_array($token) && $token[0] == $methodType) {
+                    if (is_array($token) && $token[0] === $methodType) {
                         break;
                     }
                 }
@@ -170,9 +172,9 @@ class DataExtractor
             if (is_string($token)) {
                 $result .= $token;
             } else {
-                list($ident, $txt) = $token;
+                [$ident, $txt] = $token;
 
-                if (!in_array($ident, [T_COMMENT, T_DOC_COMMENT])) {
+                if (!in_array($ident, [T_COMMENT, T_DOC_COMMENT], true)) {
                     $result .= $txt;
                 }
             }
