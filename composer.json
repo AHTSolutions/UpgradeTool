@@ -21,8 +21,7 @@
         "symfony/process": "~4.4.0",
         "magento/framework": "^100|^101|^102|^103",
         "ext-mbstring": "*"
-    }
-    ,
+    },
     "require-dev": {
         "roave/security-advisories": "dev-latest"
     },
