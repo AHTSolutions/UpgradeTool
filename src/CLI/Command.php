@@ -52,7 +52,7 @@ class Command extends AbstractCommand
      * @return int|void
      * @throws Exception
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->init($input, $output);
         $output->writeln('<info>Checking process was started.</info>');
@@ -87,6 +87,8 @@ class Command extends AbstractCommand
         $this->progressBar->display();
         $this->dataSaver->saveDataToFile($result);
         $this->progressBar->finish();
+
+        return AbstractCommand::SUCCESS;
     }
 
     /**

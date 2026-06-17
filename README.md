@@ -27,11 +27,11 @@ Add this configuration to `composer.json` file:
     "ahtsolutions/upgradetool": "dev-master",
   },
   "repositories": {
-      "ahtsolutions/upgradetool": {
-          "type": "git",
-          "url": "https://github.com/AHTSolutions/UpgradeTool.git"
-      }
-  }
+    {
+      "type": "git",
+      "url": "https://github.com/AHTSolutions/UpgradeTool.git"
+    }
+}
 ```
 After that run command `composer update`.
 
